@@ -165,3 +165,14 @@ docker container rm worker-2
 docker container rm worker-3
 docker container rm worker-4
 ```
+```bash
+docker compose up -d --build
+```
+
+## Reinstall docker containers
+
+```bash
+cd $HOME && cd basic-coin-prediction-node
+rm docker-compose.yml
+wget https://raw.githubusercontent.com/annhoami/allora-worker-node-testnet/main/docker-compose.yml
+```
