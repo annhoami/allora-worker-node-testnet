@@ -1,6 +1,10 @@
 # allora-worker-node-testnet
 
 ```bash
+apt update && apt install tmux && tmux
+```
+
+```bash
 rm -rf allora.sh allora-chain/ basic-coin-prediction-node/
 ```
 
@@ -8,11 +12,20 @@ rm -rf allora.sh allora-chain/ basic-coin-prediction-node/
 wget https://raw.githubusercontent.com/annhoami/allora-worker-node-testnet/main/allora.sh && chmod +x allora.sh && ./allora.sh
 ```
 
+## Check running docker containers
+
 ```bash
-apt update && apt install tmux && tmux
+# Ensure you are in the right directory
+cd $HOME && cd basic-coin-prediction-node
+
+# Check worker 1 logs
+docker compose logs -f worker-1
+
+# Check worker 2 logs
+docker compose logs -f worker-2
 ```
 
-## Check running docker containers
+##Check running docker containers
 
 ```bash
 # Ensure you are in the right directory
@@ -143,4 +156,24 @@ curl --location 'http://localhost:6000/api/v1/functions/execute' --header 'Conte
         "timeout": 2
     }
 }' | jq
+```
+
+## Error 408: when checking topic status
+
+```bash
+# Ensure you are in the right directory
+cd $HOME && cd basic-coin-prediction-node
+
+# Remove worker container (worker-1 or worker-2)
+docker container stop worker-1
+docker container stop worker-2
+docker container stop worker-3
+docker container stop worker-4
+docker container rm worker-1
+docker container rm worker-2
+docker container rm worker-3
+docker container rm worker-4
+
+# Restart worker container (worker-1 or worker-2)
+docker compose up -d --build
 ```
