@@ -8,6 +8,10 @@ rm -rf allora.sh allora-chain/ basic-coin-prediction-node/
 wget https://raw.githubusercontent.com/annhoami/allora-worker-node-testnet/main/allora.sh && chmod +x allora.sh && ./allora.sh
 ```
 
+```bash
+apt update && apt install tmux && tmux
+```
+
 ## Check running docker containers
 
 ```bash
