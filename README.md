@@ -174,5 +174,6 @@ docker compose up -d --build
 ```bash
 cd $HOME && cd basic-coin-prediction-node
 rm docker-compose.yml
+rm allora-docker.sh
 wget https://raw.githubusercontent.com/annhoami/allora-worker-node-testnet/main/allora-docker.sh && chmod +x allora-docker.sh && ./allora-docker.sh
 ```
