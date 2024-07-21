@@ -24,16 +24,6 @@ echo -e "${BOLD}${DARK_YELLOW}RAM : 2 to 4 GB.${RESET}"
 echo -e "${BOLD}${DARK_YELLOW}Storage : SSD or NVMe with at least 5GB of space.${RESET}"
 echo
 
-echo -e "${CYAN}Do you meet all of these requirements? (Y/N):${RESET}"
-read -p "" response
-echo
-
-if [[ ! "$response" =~ ^[Yy]$ ]]; then
-    echo -e "${BOLD}${DARK_YELLOW}Error: You do not meet the required specifications. Exiting...${RESET}"
-    echo
-    exit 1
-fi
-
 echo -e "${BOLD}${DARK_YELLOW}Updating system dependencies...${RESET}"
 execute_with_prompt "sudo apt update -y && sudo apt upgrade -y"
 echo
