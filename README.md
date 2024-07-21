@@ -23,19 +23,10 @@ docker compose logs -f worker-1
 
 # Check worker 2 logs
 docker compose logs -f worker-2
-```
 
-##Check running docker containers
+docker compose logs -f worker-3
 
-```bash
-# Ensure you are in the right directory
-cd $HOME && cd basic-coin-prediction-node
-
-# Check worker 1 logs
-docker compose logs -f worker-1
-
-# Check worker 2 logs
-docker compose logs -f worker-2
+docker compose logs -f worker-4
 ```
 
 ## Check Topic 1
@@ -173,7 +164,4 @@ docker container rm worker-1
 docker container rm worker-2
 docker container rm worker-3
 docker container rm worker-4
-
-# Restart worker container (worker-1 or worker-2)
-docker compose up -d --build
 ```
