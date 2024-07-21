@@ -1,8 +1,55 @@
-version: '3'
+#!/bin/bash
 
+BOLD="\033[1m"
+UNDERLINE="\033[4m"
+DARK_YELLOW="\033[0;33m"
+CYAN="\033[0;36m"
+RESET="\033[0;32m"
+
+execute_with_prompt() {
+    echo -e "${BOLD}Executing: $1${RESET}"
+    if eval "$1"; then
+        echo "Command executed successfully."
+    else
+        echo -e "${BOLD}${DARK_YELLOW}Error executing command: $1${RESET}"
+        exit 1
+    fi
+}
+
+echo -e "${BOLD}${DARK_YELLOW}This is your Head ID:${RESET}"
+cat head-data/keys/identity
+echo
+
+if [ -f docker-compose.yml ]; then
+    rm docker-compose.yml
+    echo "Removed existing docker-compose.yml file."
+    echo
+fi
+
+read -p "Enter HEAD_ID: " HEAD_ID
+echo
+
+read -p "Enter WALLET_SEED_PHRASE: " WALLET_SEED_PHRASE
+echo
+
+read -p "Enter TOPIC_ID_1: " TOPIC_ID_1
+echo
+
+read -p "Enter TOPIC_ID_2: " TOPIC_ID_2
+echo
+
+read -p "Enter TOPIC_ID_3: " TOPIC_ID_3
+echo
+
+read -p "Enter TOPIC_ID_4: " TOPIC_ID_4
+echo
+
+echo -e "${BOLD}${UNDERLINE}${DARK_YELLOW}Generating docker-compose.yml file...${RESET}"
+cat <<EOF > docker-compose.yml
+version: '3'
 services:
   inference:
-    container_name: inference
+    container_name: inference-basic-eth-pred
     build:
       context: .
     command: python -u /app/app.py
@@ -20,9 +67,9 @@ services:
       retries: 12
     volumes:
       - ./inference-data:/app/data
-  
+
   updater:
-    container_name: updater
+    container_name: updater-basic-eth-pred
     build: .
     environment:
       - INFERENCE_API_ADDRESS=http://inference:8000
@@ -239,3 +286,16 @@ volumes:
   inference-data:
   worker-data:
   head-data:
+EOF
+
+echo -e "${BOLD}${DARK_YELLOW}docker-compose.yml file generated successfully!${RESET}"
+echo
+
+echo -e "${BOLD}${UNDERLINE}${DARK_YELLOW}Building and starting Docker containers...${RESET}"
+docker-compose build
+docker-compose up -d
+echo
+
+echo -e "${BOLD}${DARK_YELLOW}Checking running Docker containers...${RESET}"
+docker ps
+echo
