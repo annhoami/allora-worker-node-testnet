@@ -222,7 +222,7 @@ services:
           --runtime-path=/app/runtime --runtime-cli=bls-runtime --workspace=/data/workspace \
           --private-key=/data/keys/priv.bin --log-level=debug --port=9011 \
           --boot-nodes=/ip4/172.22.0.100/tcp/9010/p2p/$HEAD_ID \
-          --allora-chain-key-name=testkey \
+          --allora-chain-key-name=worker-1 \
           --allora-chain-restore-mnemonic='$WALLET_SEED_PHRASE' \
           --allora-node-rpc-address=https://allora-rpc.testnet-1.testnet.allora.network \
           --topic=allora-topic-$TOPIC_ID_1-worker --allora-chain-worker-mode=worker
@@ -236,8 +236,8 @@ services:
     networks:
       eth-model-local:
         aliases:
-          - worker
-        ipv4_address: 172.22.0.10
+          - worker1
+        ipv4_address: 172.22.0.11
 
   worker-2:
     container_name: worker-2
@@ -259,9 +259,9 @@ services:
         fi
         allora-node --role=worker --peer-db=/data/peerdb --function-db=/data/function-db \
           --runtime-path=/app/runtime --runtime-cli=bls-runtime --workspace=/data/workspace \
-          --private-key=/data/keys/priv.bin --log-level=debug --port=9011 \
+          --private-key=/data/keys/priv.bin --log-level=debug --port=9012 \
           --boot-nodes=/ip4/172.22.0.100/tcp/9010/p2p/$HEAD_ID \
-          --allora-chain-key-name=testkey \
+          --allora-chain-key-name=worker-2 \
           --allora-chain-restore-mnemonic='$WALLET_SEED_PHRASE' \
           --allora-node-rpc-address=https://allora-rpc.testnet-1.testnet.allora.network \
           --topic=allora-topic-$TOPIC_ID_2-worker --allora-chain-worker-mode=worker
@@ -275,8 +275,8 @@ services:
     networks:
       eth-model-local:
         aliases:
-          - worker
-        ipv4_address: 172.22.0.10
+          - worker2
+        ipv4_address: 172.22.0.12
 
   worker-3:
     container_name: worker-3
@@ -298,9 +298,9 @@ services:
         fi
         allora-node --role=worker --peer-db=/data/peerdb --function-db=/data/function-db \
           --runtime-path=/app/runtime --runtime-cli=bls-runtime --workspace=/data/workspace \
-          --private-key=/data/keys/priv.bin --log-level=debug --port=9011 \
+          --private-key=/data/keys/priv.bin --log-level=debug --port=9013 \
           --boot-nodes=/ip4/172.22.0.100/tcp/9010/p2p/$HEAD_ID \
-          --allora-chain-key-name=testkey \
+          --allora-chain-key-name=worker-3 \
           --allora-chain-restore-mnemonic='$WALLET_SEED_PHRASE' \
           --allora-node-rpc-address=https://allora-rpc.testnet-1.testnet.allora.network \
           --topic=allora-topic-$TOPIC_ID_3-worker --allora-chain-worker-mode=worker
@@ -314,8 +314,8 @@ services:
     networks:
       eth-model-local:
         aliases:
-          - worker
-        ipv4_address: 172.22.0.10
+          - worker3
+        ipv4_address: 172.22.0.13
 
   worker-4:
     container_name: worker-4
@@ -337,9 +337,9 @@ services:
         fi
         allora-node --role=worker --peer-db=/data/peerdb --function-db=/data/function-db \
           --runtime-path=/app/runtime --runtime-cli=bls-runtime --workspace=/data/workspace \
-          --private-key=/data/keys/priv.bin --log-level=debug --port=9011 \
+          --private-key=/data/keys/priv.bin --log-level=debug --port=9014 \
           --boot-nodes=/ip4/172.22.0.100/tcp/9010/p2p/$HEAD_ID \
-          --allora-chain-key-name=testkey \
+          --allora-chain-key-name=worker-4 \
           --allora-chain-restore-mnemonic='$WALLET_SEED_PHRASE' \
           --allora-node-rpc-address=https://allora-rpc.testnet-1.testnet.allora.network \
           --topic=allora-topic-$TOPIC_ID_4-worker --allora-chain-worker-mode=worker
@@ -353,8 +353,8 @@ services:
     networks:
       eth-model-local:
         aliases:
-          - worker
-        ipv4_address: 172.22.0.10
+          - worker4
+        ipv4_address: 172.22.0.14
 
   head:
     container_name: head
