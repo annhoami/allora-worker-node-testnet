@@ -62,7 +62,7 @@ echo
 
 echo -e "${BOLD}${DARK_YELLOW}Installing Go...${RESET}"
 # Install Go
-sudo rm -rf /usr/local/go
+cd $HOME && sudo rm -rf /usr/local/go
 curl -L https://go.dev/dl/go1.22.2.linux-amd64.tar.gz | sudo tar -xzf - -C /usr/local
 echo 'export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin' >> $HOME/.bash_profile
 echo 'export PATH=$PATH:$(go env GOPATH)/bin' >> $HOME/.bash_profile
