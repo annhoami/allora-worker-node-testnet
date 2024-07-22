@@ -129,13 +129,13 @@ services:
         # Change boot-nodes below to the key advertised by your head
         allora-node --role=worker --peer-db=/data/peerdb --function-db=/data/function-db \
           --runtime-path=/app/runtime --runtime-cli=bls-runtime --workspace=/data/workspace \
-          --private-key=/data/keys/priv.bin --log-level=debug --port=9012 \
+          --private-key=/data/keys/priv.bin --log-level=debug --port=9011 \
           --boot-nodes=/ip4/172.22.0.100/tcp/9010/p2p/$HEAD_ID \
-          --topic=allora-topic-2-worker --allora-chain-worker-mode=worker \
+          --topic=allora-topic-1-worker --allora-chain-worker-mode=worker \
           --allora-chain-restore-mnemonic='$WALLET_SEED_PHRASE' \
           --allora-node-rpc-address=https://allora-rpc.testnet-1.testnet.allora.network \
-          --allora-chain-key-name=worker-2 \
-          --allora-chain-topic-id=2
+          --allora-chain-key-name=worker-1 \
+          --allora-chain-topic-id=1
     volumes:
       - ./workers/worker-1:/data
     working_dir: /data
@@ -146,7 +146,7 @@ services:
       eth-model-local:
         aliases:
           - worker1
-        ipv4_address: 172.22.0.13
+        ipv4_address: 172.22.0.12
 
   worker-2:
     container_name: worker-2
@@ -169,13 +169,13 @@ services:
         # Change boot-nodes below to the key advertised by your head
         allora-node --role=worker --peer-db=/data/peerdb --function-db=/data/function-db \
           --runtime-path=/app/runtime --runtime-cli=bls-runtime --workspace=/data/workspace \
-          --private-key=/data/keys/priv.bin --log-level=debug --port=9011 \
+          --private-key=/data/keys/priv.bin --log-level=debug --port=9013 \
           --boot-nodes=/ip4/172.22.0.100/tcp/9010/p2p/$HEAD_ID \
-          --topic=allora-topic-1-worker --allora-chain-worker-mode=worker \
+          --topic=allora-topic-2-worker --allora-chain-worker-mode=worker \
           --allora-chain-restore-mnemonic='$WALLET_SEED_PHRASE' \
           --allora-node-rpc-address=https://allora-rpc.testnet-1.testnet.allora.network \
-          --allora-chain-key-name=worker-1 \
-          --allora-chain-topic-id=1
+          --allora-chain-key-name=worker-2 \
+          --allora-chain-topic-id=2
     volumes:
       - ./workers/worker-2:/data
     working_dir: /data
@@ -185,48 +185,8 @@ services:
     networks:
       eth-model-local:
         aliases:
-          - worker2
-        ipv4_address: 172.22.0.12
-
-  worker-3:
-    container_name: worker-3
-    environment:
-      - INFERENCE_API_ADDRESS=http://inference:8000
-      - HOME=/data
-    build:
-      context: .
-      dockerfile: Dockerfile_b7s
-    entrypoint:
-      - "/bin/bash"
-      - "-c"
-      - |
-        if [ ! -f /data/keys/priv.bin ]; then
-          echo "Generating new private keys..."
-          mkdir -p /data/keys
-          cd /data/keys
-          allora-keys
-        fi
-        # Change boot-nodes below to the key advertised by your head
-        allora-node --role=worker --peer-db=/data/peerdb --function-db=/data/function-db \
-          --runtime-path=/app/runtime --runtime-cli=bls-runtime --workspace=/data/workspace \
-          --private-key=/data/keys/priv.bin --log-level=debug --port=9013 \
-          --boot-nodes=/ip4/172.22.0.100/tcp/9010/p2p/$HEAD_ID \
-          --topic=allora-topic-3-worker --allora-chain-worker-mode=worker \
-          --allora-chain-restore-mnemonic='$WALLET_SEED_PHRASE' \
-          --allora-node-rpc-address=https://allora-rpc.testnet-1.testnet.allora.network \
-          --allora-chain-key-name=worker-3 \
-          --allora-chain-topic-id=3
-    volumes:
-      - ./workers/worker-3:/data
-    working_dir: /data
-    depends_on:
-      - inference
-      - head
-    networks:
-      eth-model-local:
-        aliases:
-          - worker3
-        ipv4_address: 172.22.0.14
+          - worker1
+        ipv4_address: 172.22.0.13
   
 networks:
   eth-model-local:
