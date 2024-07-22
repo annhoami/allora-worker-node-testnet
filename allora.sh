@@ -24,81 +24,55 @@ echo -e "${BOLD}${DARK_YELLOW}RAM : 2 to 4 GB.${RESET}"
 echo -e "${BOLD}${DARK_YELLOW}Storage : SSD or NVMe with at least 5GB of space.${RESET}"
 echo
 
-echo -e "${BOLD}${DARK_YELLOW}Updating system dependencies...${RESET}"
-execute_with_prompt "sudo apt update -y && sudo apt upgrade -y"
-echo
-
 echo -e "${BOLD}${DARK_YELLOW}Installing packages...${RESET}"
-execute_with_prompt "sudo apt install ca-certificates zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev curl git wget make jq build-essential pkg-config lsb-release libssl-dev libreadline-dev libffi-dev gcc screen unzip lz4 -y"
+sudo apt update & sudo apt upgrade -y
+sudo apt install ca-certificates zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev curl git wget make jq build-essential pkg-config lsb-release libssl-dev libreadline-dev libffi-dev gcc screen unzip lz4 -y
 echo
 
 echo -e "${BOLD}${DARK_YELLOW}Installing python3...${RESET}"
-execute_with_prompt "sudo apt install python3 python3-pip -y"
-echo
+sudo apt install python3
+python3 --version
 
-echo -e "${BOLD}${DARK_YELLOW}Checking python version...${RESET}"
-execute_with_prompt 'python3 --version'
-execute_with_prompt 'pip3 --version'
+sudo apt install python3-pip
+pip3 --version
 echo
 
 echo -e "${BOLD}${DARK_YELLOW}Installing Docker...${RESET}"
-execute_with_prompt 'curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg'
-echo
-execute_with_prompt 'echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null'
-echo
-execute_with_prompt 'sudo apt-get update'
-echo
-execute_with_prompt 'sudo apt-get install docker-ce docker-ce-cli containerd.io -y'
-echo
+# Install Docker
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
 
-echo -e "${BOLD}${DARK_YELLOW}Checking docker version...${RESET}"
-execute_with_prompt 'docker version'
-echo
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
-echo -e "${BOLD}${DARK_YELLOW}Installing Docker Compose...${RESET}"
+sudo apt-get update
+sudo apt-get install docker-ce docker-ce-cli containerd.io
+docker version
+
+# Install Docker-Compose
 VER=$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep tag_name | cut -d '"' -f 4)
-echo
-execute_with_prompt 'sudo curl -L "https://github.com/docker/compose/releases/download/'"$VER"'/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose'
-echo
-execute_with_prompt 'sudo chmod +x /usr/local/bin/docker-compose'
-echo
 
-echo -e "${BOLD}${DARK_YELLOW}Checking docker-compose version...${RESET}"
-execute_with_prompt 'docker-compose --version'
-echo
+curl -L "https://github.com/docker/compose/releases/download/"$VER"/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 
-if ! grep -q '^docker:' /etc/group; then
-    execute_with_prompt 'sudo groupadd docker'
-    echo
-fi
+chmod +x /usr/local/bin/docker-compose
+docker-compose --version
 
-execute_with_prompt 'sudo usermod -aG docker $USER'
+# Docker Permission to user
+sudo groupadd docker
+sudo usermod -aG docker $USER
 echo
 
 echo -e "${BOLD}${DARK_YELLOW}Installing Go...${RESET}"
-execute_with_prompt 'cd $HOME'
-echo
-execute_with_prompt 'sudo rm -rf /usr/local/go"'
-echo
-execute_with_prompt 'curl -L https://go.dev/dl/go1.22.4.linux-amd64.tar.gz | sudo tar -xzf - -C /usr/local'
-echo
-execute_with_prompt 'echo 'export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin' >> $HOME/.bash_profile"'
-echo
-execute_with_prompt 'echo 'export PATH=$PATH:$(go env GOPATH)/bin' >> $HOME/.bash_profile'
-echo
-execute_with_prompt 'source .bash_profile'
-echo
-
-echo -e "${BOLD}${DARK_YELLOW}Checking go version...${RESET}"
-execute_with_prompt 'go version'
+# Install Go
+sudo rm -rf /usr/local/go
+curl -L https://go.dev/dl/go1.22.4.linux-amd64.tar.gz | sudo tar -xzf - -C /usr/local
+echo 'export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin' >> $HOME/.bash_profile
+echo 'export PATH=$PATH:$(go env GOPATH)/bin' >> $HOME/.bash_profile
+source .bash_profile
+go version
 echo
 
 echo -e "${BOLD}${UNDERLINE}${DARK_YELLOW}Installing Allorand...${RESET}"
 git clone https://github.com/allora-network/allora-chain.git
 cd allora-chain && make all
-echo
-
-echo -e "${BOLD}${DARK_YELLOW}Checking allorand version...${RESET}"
 allorad version
 echo
 
@@ -110,35 +84,34 @@ echo "Request faucet to your wallet from this link: https://faucet.testnet-1.tes
 echo
 
 echo -e "${BOLD}${UNDERLINE}${DARK_YELLOW}Installing worker node...${RESET}"
+# Install
 cd $HOME && git clone https://github.com/allora-network/basic-coin-prediction-node
-cd basic-coin-prediction-node
-mkdir workers
-mkdir workers/worker-1 workers/worker-2 workers/worker-3 head-data
-echo
 
-echo -e "${BOLD}${DARK_YELLOW}Giving permissions...${RESET}"
+cd basic-coin-prediction-node
+
+mkdir workers
+mkdir workers/worker-1 workers/worker-2 head-data
+
+# Give certain permissions
 sudo chmod -R 777 workers/worker-1
 sudo chmod -R 777 workers/worker-2
-sudo chmod -R 777 workers/worker-3
 sudo chmod -R 777 head-data
-echo
 
-echo -e "${BOLD}${DARK_YELLOW}Creating Head keys...${RESET}"
+# Create head keys
 sudo docker run -it --entrypoint=bash -v ./head-data:/data alloranetwork/allora-inference-base:latest -c "mkdir -p /data/keys && (cd /data/keys && allora-keys)"
+
+# Create worker keys
 sudo docker run -it --entrypoint=bash -v ./workers/worker-1:/data alloranetwork/allora-inference-base:latest -c "mkdir -p /data/keys && (cd /data/keys && allora-keys)"
 sudo docker run -it --entrypoint=bash -v ./workers/worker-2:/data alloranetwork/allora-inference-base:latest -c "mkdir -p /data/keys && (cd /data/keys && allora-keys)"
-sudo docker run -it --entrypoint=bash -v ./workers/worker-3:/data alloranetwork/allora-inference-base:latest -c "mkdir -p /data/keys && (cd /data/keys && allora-keys)"
 echo
 
 echo -e "${BOLD}${DARK_YELLOW}This is your Head ID:${RESET}"
 cat head-data/keys/identity
 echo
 
-if [ -f docker-compose.yml ]; then
-    rm docker-compose.yml
-    echo "Removed existing docker-compose.yml file."
-    echo
-fi
+echo "Removed existing docker-compose.yml file."
+rm -rf docker-compose.yml
+echo
 
 read -p "Enter HEAD_ID: " HEAD_ID
 echo
@@ -146,21 +119,13 @@ echo
 read -p "Enter WALLET_SEED_PHRASE: " WALLET_SEED_PHRASE
 echo
 
-read -p "Enter TOPIC_ID_1: " TOPIC_ID_1
-echo
-
-read -p "Enter TOPIC_ID_2: " TOPIC_ID_2
-echo
-
-read -p "Enter TOPIC_ID_3: " TOPIC_ID_3
-echo
-
 echo -e "${BOLD}${UNDERLINE}${DARK_YELLOW}Generating docker-compose.yml file...${RESET}"
 cat <<EOF > docker-compose.yml
 version: '3'
+
 services:
   inference:
-    container_name: inference-basic-eth-pred
+    container_name: inference
     build:
       context: .
     command: python -u /app/app.py
@@ -178,9 +143,9 @@ services:
       retries: 12
     volumes:
       - ./inference-data:/app/data
-
+  
   updater:
-    container_name: updater-basic-eth-pred
+    container_name: updater
     build: .
     environment:
       - INFERENCE_API_ADDRESS=http://inference:8000
@@ -199,124 +164,7 @@ services:
         aliases:
           - updater
         ipv4_address: 172.22.0.5
-
-  worker-1:
-    container_name: worker-1
-    environment:
-      - INFERENCE_API_ADDRESS=http://inference:8000
-      - HOME=/data
-    build:
-      context: .
-      dockerfile: Dockerfile_b7s
-    entrypoint:
-      - "/bin/bash"
-      - "-c"
-      - |
-        if [ ! -f /data/keys/priv.bin ]; then
-          echo "Generating new private keys..."
-          mkdir -p /data/keys
-          cd /data/keys
-          allora-keys
-        fi
-        allora-node --role=worker --peer-db=/data/peerdb --function-db=/data/function-db \
-          --runtime-path=/app/runtime --runtime-cli=bls-runtime --workspace=/data/workspace \
-          --private-key=/data/keys/priv.bin --log-level=debug --port=9011 \
-          --boot-nodes=/ip4/172.22.0.100/tcp/9010/p2p/$HEAD_ID \
-          --allora-chain-key-name=worker-1 \
-          --allora-chain-restore-mnemonic='$WALLET_SEED_PHRASE' \
-          --allora-node-rpc-address=https://allora-rpc.testnet-1.testnet.allora.network \
-          --topic=allora-topic-$TOPIC_ID_1-worker --allora-chain-worker-mode=worker
-          --allora-chain-topic-id=$TOPIC_ID_1
-    volumes:
-      - ./workers/worker-1:/data
-    working_dir: /data
-    depends_on:
-      - inference
-      - head
-    networks:
-      eth-model-local:
-        aliases:
-          - worker1
-        ipv4_address: 172.22.0.11
-
-  worker-2:
-    container_name: worker-2
-    environment:
-      - INFERENCE_API_ADDRESS=http://inference:8000
-      - HOME=/data
-    build:
-      context: .
-      dockerfile: Dockerfile_b7s
-    entrypoint:
-      - "/bin/bash"
-      - "-c"
-      - |
-        if [ ! -f /data/keys/priv.bin ]; then
-          echo "Generating new private keys..."
-          mkdir -p /data/keys
-          cd /data/keys
-          allora-keys
-        fi
-        allora-node --role=worker --peer-db=/data/peerdb --function-db=/data/function-db \
-          --runtime-path=/app/runtime --runtime-cli=bls-runtime --workspace=/data/workspace \
-          --private-key=/data/keys/priv.bin --log-level=debug --port=9012 \
-          --boot-nodes=/ip4/172.22.0.100/tcp/9010/p2p/$HEAD_ID \
-          --allora-chain-key-name=worker-2 \
-          --allora-chain-restore-mnemonic='$WALLET_SEED_PHRASE' \
-          --allora-node-rpc-address=https://allora-rpc.testnet-1.testnet.allora.network \
-          --topic=allora-topic-$TOPIC_ID_2-worker --allora-chain-worker-mode=worker
-          --allora-chain-topic-id=$TOPIC_ID_2
-    volumes:
-      - ./workers/worker-2:/data
-    working_dir: /data
-    depends_on:
-      - inference
-      - head
-    networks:
-      eth-model-local:
-        aliases:
-          - worker2
-        ipv4_address: 172.22.0.12
-
-  worker-3:
-    container_name: worker-3
-    environment:
-      - INFERENCE_API_ADDRESS=http://inference:8000
-      - HOME=/data
-    build:
-      context: .
-      dockerfile: Dockerfile_b7s
-    entrypoint:
-      - "/bin/bash"
-      - "-c"
-      - |
-        if [ ! -f /data/keys/priv.bin ]; then
-          echo "Generating new private keys..."
-          mkdir -p /data/keys
-          cd /data/keys
-          allora-keys
-        fi
-        allora-node --role=worker --peer-db=/data/peerdb --function-db=/data/function-db \
-          --runtime-path=/app/runtime --runtime-cli=bls-runtime --workspace=/data/workspace \
-          --private-key=/data/keys/priv.bin --log-level=debug --port=9013 \
-          --boot-nodes=/ip4/172.22.0.100/tcp/9010/p2p/$HEAD_ID \
-          --allora-chain-key-name=worker-3 \
-          --allora-chain-restore-mnemonic='$WALLET_SEED_PHRASE' \
-          --allora-node-rpc-address=https://allora-rpc.testnet-1.testnet.allora.network \
-          --topic=allora-topic-$TOPIC_ID_3-worker --allora-chain-worker-mode=worker
-          --allora-chain-topic-id=$TOPIC_ID_3
-    volumes:
-      - ./workers/worker-3:/data
-    working_dir: /data
-    depends_on:
-      - inference
-      - head
-    networks:
-      eth-model-local:
-        aliases:
-          - worker3
-        ipv4_address: 172.22.0.13
-
+  
   head:
     container_name: head
     image: alloranetwork/allora-inference-base-head:latest
@@ -347,6 +195,86 @@ services:
           - head
         ipv4_address: 172.22.0.100
 
+  worker-1:
+    container_name: worker-1
+    environment:
+      - INFERENCE_API_ADDRESS=http://inference:8000
+      - HOME=/data
+    build:
+      context: .
+      dockerfile: Dockerfile_b7s
+    entrypoint:
+      - "/bin/bash"
+      - "-c"
+      - |
+        if [ ! -f /data/keys/priv.bin ]; then
+          echo "Generating new private keys..."
+          mkdir -p /data/keys
+          cd /data/keys
+          allora-keys
+        fi
+        # Change boot-nodes below to the key advertised by your head
+        allora-node --role=worker --peer-db=/data/peerdb --function-db=/data/function-db \
+          --runtime-path=/app/runtime --runtime-cli=bls-runtime --workspace=/data/workspace \
+          --private-key=/data/keys/priv.bin --log-level=debug --port=9011 \
+          --boot-nodes=/ip4/172.22.0.100/tcp/9010/p2p/$HEAD_ID \
+          --topic=allora-topic-1-worker --allora-chain-worker-mode=worker \
+          --allora-chain-restore-mnemonic='$WALLET_SEED_PHRASE' \
+          --allora-node-rpc-address=https://allora-rpc.testnet-1.testnet.allora.network \
+          --allora-chain-key-name=worker-1 \
+          --allora-chain-topic-id=1
+    volumes:
+      - ./workers/worker-1:/data
+    working_dir: /data
+    depends_on:
+      - inference
+      - head
+    networks:
+      eth-model-local:
+        aliases:
+          - worker1
+        ipv4_address: 172.22.0.12
+
+  worker-2:
+    container_name: worker-2
+    environment:
+      - INFERENCE_API_ADDRESS=http://inference:8000
+      - HOME=/data
+    build:
+      context: .
+      dockerfile: Dockerfile_b7s
+    entrypoint:
+      - "/bin/bash"
+      - "-c"
+      - |
+        if [ ! -f /data/keys/priv.bin ]; then
+          echo "Generating new private keys..."
+          mkdir -p /data/keys
+          cd /data/keys
+          allora-keys
+        fi
+        # Change boot-nodes below to the key advertised by your head
+        allora-node --role=worker --peer-db=/data/peerdb --function-db=/data/function-db \
+          --runtime-path=/app/runtime --runtime-cli=bls-runtime --workspace=/data/workspace \
+          --private-key=/data/keys/priv.bin --log-level=debug --port=9013 \
+          --boot-nodes=/ip4/172.22.0.100/tcp/9010/p2p/$HEAD_ID \
+          --topic=allora-topic-2-worker --allora-chain-worker-mode=worker \
+          --allora-chain-restore-mnemonic='$WALLET_SEED_PHRASE' \
+          --allora-node-rpc-address=https://allora-rpc.testnet-1.testnet.allora.network \
+          --allora-chain-key-name=worker-2 \
+          --allora-chain-topic-id=2
+    volumes:
+      - ./workers/worker-2:/data
+    working_dir: /data
+    depends_on:
+      - inference
+      - head
+    networks:
+      eth-model-local:
+        aliases:
+          - worker1
+        ipv4_address: 172.22.0.13
+  
 networks:
   eth-model-local:
     driver: bridge
@@ -356,7 +284,7 @@ networks:
 
 volumes:
   inference-data:
-  worker-data:
+  workers:
   head-data:
 EOF
 
@@ -364,8 +292,7 @@ echo -e "${BOLD}${DARK_YELLOW}docker-compose.yml file generated successfully!${R
 echo
 
 echo -e "${BOLD}${UNDERLINE}${DARK_YELLOW}Building and starting Docker containers...${RESET}"
-docker-compose build
-docker-compose up -d
+docker compose up -d --build
 echo
 
 echo -e "${BOLD}${DARK_YELLOW}Checking running Docker containers...${RESET}"
