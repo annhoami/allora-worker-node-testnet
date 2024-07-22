@@ -155,15 +155,9 @@ curl --location 'http://localhost:6000/api/v1/functions/execute' --header 'Conte
 # Ensure you are in the right directory
 cd $HOME && cd basic-coin-prediction-node
 
-# Remove worker container (worker-1 or worker-2)
-docker container stop worker-1
-docker container stop worker-2
-docker container stop worker-3
-docker container stop worker-4
-docker container rm worker-1
-docker container rm worker-2
-docker container rm worker-3
-docker container rm worker-4
+# Remove worker container
+docker container stop $(docker ps -q)
+docker container rm $(docker ps -aq)
 ```
 ```bash
 docker compose up -d --build
