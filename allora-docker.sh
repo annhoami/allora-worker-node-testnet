@@ -51,8 +51,8 @@ services:
         ipv4_address: 172.22.0.4
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/inference/ETH"]
-      interval: 10s
-      timeout: 10s
+      interval: 30s
+      timeout: 30s
       retries: 12
     volumes:
       - ./inference-data:/app/data
