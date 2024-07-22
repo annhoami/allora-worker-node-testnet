@@ -27,6 +27,10 @@ docker compose logs -f worker-2
 docker compose logs -f worker-3
 
 docker compose logs -f worker-4
+
+docker compose logs -f worker-5
+
+docker compose logs -f worker-6
 ```
 
 ## Check Topic 1
