@@ -36,6 +36,11 @@ echo -e "${BOLD}${DARK_YELLOW}Installing python3...${RESET}"
 execute_with_prompt "sudo apt install python3 python3-pip -y"
 echo
 
+echo -e "${BOLD}${DARK_YELLOW}Checking python version...${RESET}"
+execute_with_prompt 'python3 --version'
+execute_with_prompt 'pip3 --version'
+echo
+
 echo -e "${BOLD}${DARK_YELLOW}Installing Docker...${RESET}"
 execute_with_prompt 'curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg'
 echo
@@ -73,15 +78,15 @@ echo
 echo -e "${BOLD}${DARK_YELLOW}Installing Go...${RESET}"
 execute_with_prompt 'cd $HOME'
 echo
-execute_with_prompt 'ver="1.21.3" && wget "https://golang.org/dl/go$ver.linux-amd64.tar.gz"'
+execute_with_prompt 'sudo rm -rf /usr/local/go"'
 echo
-execute_with_prompt 'sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf "go$ver.linux-amd64.tar.gz"'
+execute_with_prompt 'curl -L https://go.dev/dl/go1.22.4.linux-amd64.tar.gz | sudo tar -xzf - -C /usr/local'
 echo
-execute_with_prompt 'rm "go$ver.linux-amd64.tar.gz"'
+execute_with_prompt 'echo 'export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin' >> $HOME/.bash_profile"'
 echo
-execute_with_prompt 'echo "export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin" >> $HOME/.bash_profile'
+execute_with_prompt 'echo 'export PATH=$PATH:$(go env GOPATH)/bin' >> $HOME/.bash_profile'
 echo
-execute_with_prompt 'source $HOME/.bash_profile'
+execute_with_prompt 'source .bash_profile'
 echo
 
 echo -e "${BOLD}${DARK_YELLOW}Checking go version...${RESET}"
@@ -108,14 +113,13 @@ echo -e "${BOLD}${UNDERLINE}${DARK_YELLOW}Installing worker node...${RESET}"
 cd $HOME && git clone https://github.com/allora-network/basic-coin-prediction-node
 cd basic-coin-prediction-node
 mkdir workers
-mkdir workers/worker-1 workers/worker-2 workers/worker-3 workers/worker-4 head-data
+mkdir workers/worker-1 workers/worker-2 workers/worker-3 head-data
 echo
 
 echo -e "${BOLD}${DARK_YELLOW}Giving permissions...${RESET}"
 sudo chmod -R 777 workers/worker-1
 sudo chmod -R 777 workers/worker-2
 sudo chmod -R 777 workers/worker-3
-sudo chmod -R 777 workers/worker-4
 sudo chmod -R 777 head-data
 echo
 
@@ -124,7 +128,6 @@ sudo docker run -it --entrypoint=bash -v ./head-data:/data alloranetwork/allora-
 sudo docker run -it --entrypoint=bash -v ./workers/worker-1:/data alloranetwork/allora-inference-base:latest -c "mkdir -p /data/keys && (cd /data/keys && allora-keys)"
 sudo docker run -it --entrypoint=bash -v ./workers/worker-2:/data alloranetwork/allora-inference-base:latest -c "mkdir -p /data/keys && (cd /data/keys && allora-keys)"
 sudo docker run -it --entrypoint=bash -v ./workers/worker-3:/data alloranetwork/allora-inference-base:latest -c "mkdir -p /data/keys && (cd /data/keys && allora-keys)"
-sudo docker run -it --entrypoint=bash -v ./workers/worker-4:/data alloranetwork/allora-inference-base:latest -c "mkdir -p /data/keys && (cd /data/keys && allora-keys)"
 echo
 
 echo -e "${BOLD}${DARK_YELLOW}This is your Head ID:${RESET}"
@@ -150,9 +153,6 @@ read -p "Enter TOPIC_ID_2: " TOPIC_ID_2
 echo
 
 read -p "Enter TOPIC_ID_3: " TOPIC_ID_3
-echo
-
-read -p "Enter TOPIC_ID_4: " TOPIC_ID_4
 echo
 
 echo -e "${BOLD}${UNDERLINE}${DARK_YELLOW}Generating docker-compose.yml file...${RESET}"
@@ -226,6 +226,7 @@ services:
           --allora-chain-restore-mnemonic='$WALLET_SEED_PHRASE' \
           --allora-node-rpc-address=https://allora-rpc.testnet-1.testnet.allora.network \
           --topic=allora-topic-$TOPIC_ID_1-worker --allora-chain-worker-mode=worker
+          --allora-chain-topic-id=$TOPIC_ID_1
     volumes:
       - ./workers/worker-1:/data
     working_dir: /data
@@ -264,6 +265,7 @@ services:
           --allora-chain-restore-mnemonic='$WALLET_SEED_PHRASE' \
           --allora-node-rpc-address=https://allora-rpc.testnet-1.testnet.allora.network \
           --topic=allora-topic-$TOPIC_ID_2-worker --allora-chain-worker-mode=worker
+          --allora-chain-topic-id=$TOPIC_ID_2
     volumes:
       - ./workers/worker-2:/data
     working_dir: /data
@@ -302,6 +304,7 @@ services:
           --allora-chain-restore-mnemonic='$WALLET_SEED_PHRASE' \
           --allora-node-rpc-address=https://allora-rpc.testnet-1.testnet.allora.network \
           --topic=allora-topic-$TOPIC_ID_3-worker --allora-chain-worker-mode=worker
+          --allora-chain-topic-id=$TOPIC_ID_3
     volumes:
       - ./workers/worker-3:/data
     working_dir: /data
@@ -313,44 +316,6 @@ services:
         aliases:
           - worker3
         ipv4_address: 172.22.0.13
-
-  worker-4:
-    container_name: worker-4
-    environment:
-      - INFERENCE_API_ADDRESS=http://inference:8000
-      - HOME=/data
-    build:
-      context: .
-      dockerfile: Dockerfile_b7s
-    entrypoint:
-      - "/bin/bash"
-      - "-c"
-      - |
-        if [ ! -f /data/keys/priv.bin ]; then
-          echo "Generating new private keys..."
-          mkdir -p /data/keys
-          cd /data/keys
-          allora-keys
-        fi
-        allora-node --role=worker --peer-db=/data/peerdb --function-db=/data/function-db \
-          --runtime-path=/app/runtime --runtime-cli=bls-runtime --workspace=/data/workspace \
-          --private-key=/data/keys/priv.bin --log-level=debug --port=9014 \
-          --boot-nodes=/ip4/172.22.0.100/tcp/9010/p2p/$HEAD_ID \
-          --allora-chain-key-name=worker-4 \
-          --allora-chain-restore-mnemonic='$WALLET_SEED_PHRASE' \
-          --allora-node-rpc-address=https://allora-rpc.testnet-1.testnet.allora.network \
-          --topic=allora-topic-$TOPIC_ID_4-worker --allora-chain-worker-mode=worker
-    volumes:
-      - ./workers/worker-4:/data
-    working_dir: /data
-    depends_on:
-      - inference
-      - head
-    networks:
-      eth-model-local:
-        aliases:
-          - worker4
-        ipv4_address: 172.22.0.14
 
   head:
     container_name: head
