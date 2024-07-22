@@ -32,12 +32,13 @@ docker compose logs -f worker-4
 ## Check Topic 1
 
 ```bash
-network_height=$(curl -s -X 'GET' 'https://allora-rpc.testnet-1.testnet.allora.network/abci_info?' -H 'accept: application/json' | jq -r .result.response.last_block_height) && \
-curl --location 'http://localhost:6000/api/v1/functions/execute' --header 'Content-Type: application/json' --data '{
+curl --location 'https://heads.testnet-1.testnet.allora.network/api/v1/functions/execute' \
+--header 'Content-Type: application/json' \
+--data '{
     "function_id": "bafybeigpiwl3o73zvvl6dxdqu7zqcub5mhg65jiky2xqb4rdhfmikswzqm",
     "method": "allora-inference-function.wasm",
     "parameters": null,
-    "topic": "allora-topic-1-worker",
+    "topic": "1",
     "config": {
         "env_vars": [
             {
@@ -47,27 +48,24 @@ curl --location 'http://localhost:6000/api/v1/functions/execute' --header 'Conte
             {
                 "name": "ALLORA_ARG_PARAMS",
                 "value": "ETH"
-            },
-            {
-                "name": "ALLORA_BLOCK_HEIGHT_CURRENT",
-                "value": "'"${network_height}"'"
             }
         ],
         "number_of_nodes": -1,
         "timeout": 2
     }
-}' | jq
+}'
 ```
 
 ## Check Topic 2
 
 ```bash
-network_height=$(curl -s -X 'GET' 'https://allora-rpc.testnet-1.testnet.allora.network/abci_info?' -H 'accept: application/json' | jq -r .result.response.last_block_height) && \
-curl --location 'http://localhost:6000/api/v1/functions/execute' --header 'Content-Type: application/json' --data '{
+curl --location 'https://heads.testnet-1.testnet.allora.network/api/v1/functions/execute' \
+--header 'Content-Type: application/json' \
+--data '{
     "function_id": "bafybeigpiwl3o73zvvl6dxdqu7zqcub5mhg65jiky2xqb4rdhfmikswzqm",
     "method": "allora-inference-function.wasm",
     "parameters": null,
-    "topic": "allora-topic-2-worker",
+    "topic": "2",
     "config": {
         "env_vars": [
             {
@@ -77,27 +75,24 @@ curl --location 'http://localhost:6000/api/v1/functions/execute' --header 'Conte
             {
                 "name": "ALLORA_ARG_PARAMS",
                 "value": "ETH"
-            },
-            {
-                "name": "ALLORA_BLOCK_HEIGHT_CURRENT",
-                "value": "'"${network_height}"'"
             }
         ],
         "number_of_nodes": -1,
         "timeout": 2
     }
-}' | jq
+}'
 ```
 
 ## Check Topic 3
 
 ```bash
-network_height=$(curl -s -X 'GET' 'https://allora-rpc.testnet-1.testnet.allora.network/abci_info?' -H 'accept: application/json' | jq -r .result.response.last_block_height) && \
-curl --location 'http://localhost:6000/api/v1/functions/execute' --header 'Content-Type: application/json' --data '{
+curl --location 'https://heads.testnet-1.testnet.allora.network/api/v1/functions/execute' \
+--header 'Content-Type: application/json' \
+--data '{
     "function_id": "bafybeigpiwl3o73zvvl6dxdqu7zqcub5mhg65jiky2xqb4rdhfmikswzqm",
     "method": "allora-inference-function.wasm",
     "parameters": null,
-    "topic": "allora-topic-3-worker",
+    "topic": "3",
     "config": {
         "env_vars": [
             {
@@ -106,28 +101,25 @@ curl --location 'http://localhost:6000/api/v1/functions/execute' --header 'Conte
             },
             {
                 "name": "ALLORA_ARG_PARAMS",
-                "value": "ETH"
-            },
-            {
-                "name": "ALLORA_BLOCK_HEIGHT_CURRENT",
-                "value": "'"${network_height}"'"
+                "value": "BTC"
             }
         ],
         "number_of_nodes": -1,
         "timeout": 2
     }
-}' | jq
+}'
 ```
 
 ## Check Topic 4
 
 ```bash
-network_height=$(curl -s -X 'GET' 'https://allora-rpc.testnet-1.testnet.allora.network/abci_info?' -H 'accept: application/json' | jq -r .result.response.last_block_height) && \
-curl --location 'http://localhost:6000/api/v1/functions/execute' --header 'Content-Type: application/json' --data '{
+curl --location 'https://heads.testnet-1.testnet.allora.network/api/v1/functions/execute' \
+--header 'Content-Type: application/json' \
+--data '{
     "function_id": "bafybeigpiwl3o73zvvl6dxdqu7zqcub5mhg65jiky2xqb4rdhfmikswzqm",
     "method": "allora-inference-function.wasm",
     "parameters": null,
-    "topic": "allora-topic-4-worker",
+    "topic": "4",
     "config": {
         "env_vars": [
             {
@@ -136,17 +128,67 @@ curl --location 'http://localhost:6000/api/v1/functions/execute' --header 'Conte
             },
             {
                 "name": "ALLORA_ARG_PARAMS",
-                "value": "ETH"
-            },
-            {
-                "name": "ALLORA_BLOCK_HEIGHT_CURRENT",
-                "value": "'"${network_height}"'"
+                "value": "BTC"
             }
         ],
         "number_of_nodes": -1,
         "timeout": 2
     }
-}' | jq
+}'
+```
+
+## Check Topic 5
+
+```bash
+curl --location 'https://heads.testnet-1.testnet.allora.network/api/v1/functions/execute' \
+--header 'Content-Type: application/json' \
+--data '{
+    "function_id": "bafybeigpiwl3o73zvvl6dxdqu7zqcub5mhg65jiky2xqb4rdhfmikswzqm",
+    "method": "allora-inference-function.wasm",
+    "parameters": null,
+    "topic": "5",
+    "config": {
+        "env_vars": [
+            {
+                "name": "BLS_REQUEST_PATH",
+                "value": "/api"
+            },
+            {
+                "name": "ALLORA_ARG_PARAMS",
+                "value": "SOL"
+            }
+        ],
+        "number_of_nodes": -1,
+        "timeout": 2
+    }
+}'
+```
+
+## Check Topic 6
+
+```bash
+curl --location 'https://heads.testnet-1.testnet.allora.network/api/v1/functions/execute' \
+--header 'Content-Type: application/json' \
+--data '{
+    "function_id": "bafybeigpiwl3o73zvvl6dxdqu7zqcub5mhg65jiky2xqb4rdhfmikswzqm",
+    "method": "allora-inference-function.wasm",
+    "parameters": null,
+    "topic": "6",
+    "config": {
+        "env_vars": [
+            {
+                "name": "BLS_REQUEST_PATH",
+                "value": "/api"
+            },
+            {
+                "name": "ALLORA_ARG_PARAMS",
+                "value": "SOL"
+            }
+        ],
+        "number_of_nodes": -1,
+        "timeout": 2
+    }
+}'
 ```
 
 ## Error 408: when checking topic status
