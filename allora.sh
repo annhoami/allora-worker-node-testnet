@@ -90,13 +90,15 @@ cd $HOME && git clone https://github.com/allora-network/basic-coin-prediction-no
 cd basic-coin-prediction-node
 
 mkdir workers
-mkdir workers/worker-1 workers/worker-2 workers/worker-3 workers/worker-4 head-data
+mkdir workers/worker-1 workers/worker-2 workers/worker-3 workers/worker-4 workers/worker-5 workers/worker-6 head-data
 
 # Give certain permissions
 sudo chmod -R 777 workers/worker-1
 sudo chmod -R 777 workers/worker-2
 sudo chmod -R 777 workers/worker-3
 sudo chmod -R 777 workers/worker-4
+sudo chmod -R 777 workers/worker-5
+sudo chmod -R 777 workers/worker-6
 sudo chmod -R 777 head-data
 
 # Create head keys
@@ -107,6 +109,8 @@ sudo docker run -it --entrypoint=bash -v ./workers/worker-1:/data alloranetwork/
 sudo docker run -it --entrypoint=bash -v ./workers/worker-2:/data alloranetwork/allora-inference-base:latest -c "mkdir -p /data/keys && (cd /data/keys && allora-keys)"
 sudo docker run -it --entrypoint=bash -v ./workers/worker-3:/data alloranetwork/allora-inference-base:latest -c "mkdir -p /data/keys && (cd /data/keys && allora-keys)"
 sudo docker run -it --entrypoint=bash -v ./workers/worker-4:/data alloranetwork/allora-inference-base:latest -c "mkdir -p /data/keys && (cd /data/keys && allora-keys)"
+sudo docker run -it --entrypoint=bash -v ./workers/worker-5:/data alloranetwork/allora-inference-base:latest -c "mkdir -p /data/keys && (cd /data/keys && allora-keys)"
+sudo docker run -it --entrypoint=bash -v ./workers/worker-6:/data alloranetwork/allora-inference-base:latest -c "mkdir -p /data/keys && (cd /data/keys && allora-keys)"
 echo
 
 echo -e "${BOLD}${DARK_YELLOW}This is your Head ID:${RESET}"
