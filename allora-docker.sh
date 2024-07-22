@@ -35,9 +35,10 @@ echo
 echo -e "${BOLD}${UNDERLINE}${DARK_YELLOW}Generating docker-compose.yml file...${RESET}"
 cat <<EOF > docker-compose.yml
 version: '3'
+
 services:
   inference:
-    container_name: inference-basic-eth-pred
+    container_name: inference
     build:
       context: .
     command: python -u /app/app.py
@@ -55,9 +56,9 @@ services:
       retries: 12
     volumes:
       - ./inference-data:/app/data
-
+  
   updater:
-    container_name: updater-basic-eth-pred
+    container_name: updater
     build: .
     environment:
       - INFERENCE_API_ADDRESS=http://inference:8000
@@ -76,7 +77,7 @@ services:
         aliases:
           - updater
         ipv4_address: 172.22.0.5
-
+  
   head:
     container_name: head
     image: alloranetwork/allora-inference-base-head:latest
@@ -125,14 +126,15 @@ services:
           cd /data/keys
           allora-keys
         fi
+        # Change boot-nodes below to the key advertised by your head
         allora-node --role=worker --peer-db=/data/peerdb --function-db=/data/function-db \
           --runtime-path=/app/runtime --runtime-cli=bls-runtime --workspace=/data/workspace \
           --private-key=/data/keys/priv.bin --log-level=debug --port=9011 \
           --boot-nodes=/ip4/172.22.0.100/tcp/9010/p2p/$HEAD_ID \
-          --allora-chain-key-name=worker-1 \
+          --topic=allora-topic-1-worker --allora-chain-worker-mode=worker \
           --allora-chain-restore-mnemonic='$WALLET_SEED_PHRASE' \
           --allora-node-rpc-address=https://allora-rpc.testnet-1.testnet.allora.network \
-          --topic=allora-topic-1-worker --allora-chain-worker-mode=worker
+          --allora-chain-key-name=worker-1 \
           --allora-chain-topic-id=1
     volumes:
       - ./workers/worker-1:/data
@@ -144,7 +146,7 @@ services:
       eth-model-local:
         aliases:
           - worker1
-        ipv4_address: 172.22.0.11
+        ipv4_address: 172.22.0.12
 
   worker-2:
     container_name: worker-2
@@ -164,14 +166,15 @@ services:
           cd /data/keys
           allora-keys
         fi
+        # Change boot-nodes below to the key advertised by your head
         allora-node --role=worker --peer-db=/data/peerdb --function-db=/data/function-db \
           --runtime-path=/app/runtime --runtime-cli=bls-runtime --workspace=/data/workspace \
           --private-key=/data/keys/priv.bin --log-level=debug --port=9012 \
           --boot-nodes=/ip4/172.22.0.100/tcp/9010/p2p/$HEAD_ID \
-          --allora-chain-key-name=worker-2 \
+          --topic=allora-topic-2-worker --allora-chain-worker-mode=worker \
           --allora-chain-restore-mnemonic='$WALLET_SEED_PHRASE' \
           --allora-node-rpc-address=https://allora-rpc.testnet-1.testnet.allora.network \
-          --topic=allora-topic-2-worker --allora-chain-worker-mode=worker
+          --allora-chain-key-name=worker-2 \
           --allora-chain-topic-id=2
     volumes:
       - ./workers/worker-2:/data
@@ -183,7 +186,7 @@ services:
       eth-model-local:
         aliases:
           - worker2
-        ipv4_address: 172.22.0.12
+        ipv4_address: 172.22.0.13
 
   worker-3:
     container_name: worker-3
@@ -203,14 +206,15 @@ services:
           cd /data/keys
           allora-keys
         fi
+        # Change boot-nodes below to the key advertised by your head
         allora-node --role=worker --peer-db=/data/peerdb --function-db=/data/function-db \
           --runtime-path=/app/runtime --runtime-cli=bls-runtime --workspace=/data/workspace \
           --private-key=/data/keys/priv.bin --log-level=debug --port=9013 \
           --boot-nodes=/ip4/172.22.0.100/tcp/9010/p2p/$HEAD_ID \
-          --allora-chain-key-name=worker-3 \
+          --topic=allora-topic-3-worker --allora-chain-worker-mode=worker \
           --allora-chain-restore-mnemonic='$WALLET_SEED_PHRASE' \
           --allora-node-rpc-address=https://allora-rpc.testnet-1.testnet.allora.network \
-          --topic=allora-topic-3-worker --allora-chain-worker-mode=worker
+          --allora-chain-key-name=worker-3 \
           --allora-chain-topic-id=3
     volumes:
       - ./workers/worker-3:/data
@@ -222,11 +226,18 @@ services:
       eth-model-local:
         aliases:
           - worker3
-        ipv4_address: 172.22.0.13
+        ipv4_address: 172.22.0.14
+  
+networks:
+  eth-model-local:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.22.0.0/24
 
 volumes:
   inference-data:
-  worker-data:
+  workers:
   head-data:
 EOF
 
