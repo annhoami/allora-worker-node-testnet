@@ -436,6 +436,13 @@ services:
           - worker6
         ipv4_address: 172.22.0.17
 
+networks:
+  eth-model-local:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.22.0.0/24
+
 volumes:
   inference-data:
   workers:
