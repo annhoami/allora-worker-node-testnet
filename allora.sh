@@ -30,10 +30,10 @@ sudo apt install ca-certificates zlib1g-dev libncurses5-dev libgdbm-dev libnss3-
 echo
 
 echo -e "${BOLD}${DARK_YELLOW}Installing python3...${RESET}"
-sudo apt install python3
+sudo apt install python3 -y
 python3 --version
 
-sudo apt install python3-pip
+sudo apt install python3-pip -y
 pip3 --version
 echo
 
