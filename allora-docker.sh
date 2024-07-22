@@ -133,7 +133,7 @@ services:
           --boot-nodes=/ip4/172.22.0.100/tcp/9010/p2p/$HEAD_ID \
           --topic=allora-topic-1-worker --allora-chain-worker-mode=worker \
           --allora-chain-restore-mnemonic='$WALLET_SEED_PHRASE' \
-          --allora-node-rpc-address=https://allora-rpc.testnet-1.testnet.allora.network \
+          --allora-node-rpc-address=http://allora-testnet-1-rpc.testnet.nodium.xyz:26657 \
           --allora-chain-key-name=worker-1 \
           --allora-chain-topic-id=1
     volumes:
@@ -173,7 +173,7 @@ services:
           --boot-nodes=/ip4/172.22.0.100/tcp/9010/p2p/$HEAD_ID \
           --topic=allora-topic-2-worker --allora-chain-worker-mode=worker \
           --allora-chain-restore-mnemonic='$WALLET_SEED_PHRASE' \
-          --allora-node-rpc-address=https://allora-rpc.testnet-1.testnet.allora.network \
+          --allora-node-rpc-address=http://allora-testnet-1-rpc.testnet.nodium.xyz:26657 \
           --allora-chain-key-name=worker-2 \
           --allora-chain-topic-id=2
     volumes:
