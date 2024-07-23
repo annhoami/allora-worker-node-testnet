@@ -1,7 +1,9 @@
 # allora-worker-node-testnet
 
+## Start Akash
+
 ```bash
-apt update && apt install tmux && tmux
+apt update && apt install tmux sudo wget curl -y && tmux
 ```
 
 ```bash
